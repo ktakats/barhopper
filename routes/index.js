@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/search', function(req, res){
-  yelp.search({term:'food', location: req.query.location}, function(err, data){
+  yelp.search({term:'nightlife', location: req.query.location}, function(err, data){
     if(err) throw err;
     console.log(data)
     res.json(data);
