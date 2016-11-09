@@ -41,6 +41,13 @@ function produceResult(results) {
     im.src=result.image_url;
     imsp.appendChild(im);
 
+    var rsvp=document.createElement("button");
+    rsvp.type="button";
+    rsvp.value="RSVP";
+    rsvp.id="rsvp";
+    rsvp.innerHTML="RSVP";
+
+
     var textsp=document.createElement("span");
     textsp.className="textsp";
     var title = document.createElement("h2");
@@ -64,6 +71,7 @@ function produceResult(results) {
     textsp.appendChild(link);
     textsp.appendChild(extract);
     mydiv.appendChild(textsp);
+    mydiv.appendChild(rsvp)
     //mydiv.appendChild(extractTxt);
   });
 };

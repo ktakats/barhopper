@@ -9,10 +9,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose=require('mongoose');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
-
-var app = express();
 
 require('dotenv').config({silent: true});
 //Mongoose
@@ -23,6 +19,11 @@ db.once('open', function(){
   console.log('Connected to the server')
 })
 
+var routes = require('./routes/index');
+var users = require('./routes/users');
+var barRouter=require('./routes/barRouter');
+
+var app = express();
 
 // view engine setup
 app.engine('.hbs', exphbs({
@@ -45,6 +46,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/bars', barRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
