@@ -26,11 +26,27 @@ function searching() {
 };
 
 
+function Rsvp(id) {
+  $.post("/bars/"+id, function(){
+    
+  })
+}
+
 function produceResult(results) {
   //  var results = data.query.search;
   console.log(results)
   var mainDiv = document.getElementById("output");
   results.forEach(function(result) {
+    var going=0
+
+    $.get("/bars/"+result.id, function(data){
+      if(data.length!=0){
+        going=data[0].answers.length
+
+      }
+    }).done(function(){
+
+
 
     var mydiv = document.createElement("div");
     mydiv.className = "searchResult";
@@ -41,12 +57,20 @@ function produceResult(results) {
     im.src=result.image_url;
     imsp.appendChild(im);
 
+    var rsvpspan=document.createElement('span');
+
+    var numgoing=document.createElement('p');
+    numgoing.innerHTML=String(going)+" going";
+
     var rsvp=document.createElement("button");
     rsvp.type="button";
     rsvp.value="RSVP";
-    rsvp.id="rsvp";
+    rsvp.id=result.id;
     rsvp.innerHTML="RSVP";
+    rsvp.setAttribute('onclick', 'Rsvp(this.id)');
 
+    rsvpspan.appendChild(numgoing);
+    rsvpspan.appendChild(rsvp);
 
     var textsp=document.createElement("span");
     textsp.className="textsp";
@@ -71,7 +95,9 @@ function produceResult(results) {
     textsp.appendChild(link);
     textsp.appendChild(extract);
     mydiv.appendChild(textsp);
-    mydiv.appendChild(rsvp)
+
+    mydiv.appendChild(rsvpspan)
     //mydiv.appendChild(extractTxt);
+  });
   });
 };
