@@ -26,24 +26,18 @@ barRouter.route('/:id')
   })
   .post(function(req, res){
     console.log(req.params.id)
-    Bars.find({yelpid: req.params.id}, function(err, bars){
-      if (err) throw err;
-      console.log(bars.length)
-      if(bars.length!=0){
-        bars.answers.push({person: 'kati'});
-        bars.save(function(err, bar){
-          if (err) throw err;
-        });
-      }
-      else{
+    var query = {yelpid: req.params.id},
+    update = { $push: {answers: {person: 'dani'}}, new: true },
+    options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
-        Bars.create({yelpid: req.params.id, answers: [{person: 'kati'}]}, function(err, bar){
-          if(err) throw err;
-        })
-      }
+// Find the document
+    Bars.findOneAndUpdate(query, update, options, function(error, result) {
+      if (error) throw error;
+      res.json(result);
+    //  res.redirect(req.get('referer'));
+    // do something with the document
+    });
 
-      res.redirect(req.get('referer'));
-    })
 
   });
 

@@ -60,3 +60,9 @@ html {
   text-align: left;
   vertical-align: middle;
 }
+
+#snippet {
+  text-align: left;
+  font-style: italic;
+  position: relative;
+}

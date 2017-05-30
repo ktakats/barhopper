@@ -26,6 +26,7 @@ var barRouter=require('./routes/barRouter');
 var app = express();
 
 // view engine setup
+
 app.engine('.hbs', exphbs({
   defaultLayout: 'layout.hbs',
   extName: 'hbs',
