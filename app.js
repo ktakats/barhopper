@@ -8,6 +8,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose=require('mongoose');
+var passport=require('passport');
+var flash=require('connect-flash');
+var session=require('express-session');
+
+require('./config/passport')(passport);
 
 
 require('dotenv').config({silent: true});
@@ -44,6 +49,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({secret: process.env.sessionsecret,
+                 saveUninitialized: true,
+                 resave: true}))
+app.use(passport.initialize());
+app.use(passport.session())
+app.use(flash());
 
 app.use('/', routes);
 app.use('/users', users);
