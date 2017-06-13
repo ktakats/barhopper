@@ -2,6 +2,7 @@ var express=require('express');
 var bodyParser=require('body-parser');
 var mongoose=require('mongoose');
 var Bars=require('../models/bars');
+var Users=require('../models/user');
 
 var barRouter=express.Router();
 barRouter.use(bodyParser.json());
@@ -10,8 +11,7 @@ barRouter.route('/')
   .get(function(req,res){
     Bars.find({}, function(err, bars){
       if(err) throw err;
-
-      res.json(bars)
+     res.json(bars)
     })
   });
 
@@ -25,9 +25,9 @@ barRouter.route('/:id')
     })
   })
   .post(function(req, res){
-    console.log(req.params.id)
+    console.log(req.user)
     var query = {yelpid: req.params.id},
-    update = { $push: {answers: {person: 'dani'}}, new: true },
+    update = { $push: {answers: {person: req.user}}, new: true },
     options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
 // Find the document

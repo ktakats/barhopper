@@ -52,10 +52,11 @@
   <section id="intro" class="intro-section">
            <div class="container">
                <div class="row">
-                   <div class="col-lg-12" id="root">
+                   <div class="col-lg-12" id="root" >
                      <input v-model="location">
                      <button @click="searchLocation">Search</button>
-                     <div v-if="ok" v-for="business in businesses" :key="business.id" class="searchResult">
+                     <bar v-if="ok" v-for="business in businesses" :key="business.id" class="searchResult" :data="business" v-on:respond="respond">
+                      <!--
                       <div>
                         <span>
                           <img class="resultimg" :src="business.image_url">
@@ -71,7 +72,8 @@
                           <button @click="respond(business)">RSVP</button>
                         </span>
                       </div>
-                    </div>
+                    -->
+                  </bar>
                   </div>
               </div>
           </div>
@@ -132,6 +134,19 @@
   <script>
 //vue
 
+
+
+  Vue.component('bar', {
+    props: ['data'],
+    template: "<div ><span><img class='resultimg' :src='data.image_url'></span><span class='textsp'><a :href='data.url'><h2>${data.name}<img :src='data.rating_img_url_small'></h2></a><p id='snippet'> ${data.snippet_text} </p><p v-if='data.is_closed==false'>Open now</p></span><span><p>${data.going} going</p><button v-on:click='respond(data)'>RSVP</button></span></div>",
+    delimiters: ['${', '}'],
+    methods: {
+    respond(business){
+      this.$emit('respond', business)
+    }
+  },
+  })
+
   new Vue({
     el: '#root',
     delimiters: ['${', '}'],
@@ -154,6 +169,7 @@
             //Check which bars are in the database, i.e someone RSVPed
             this.$http.get("/bars")
             .then(function(result){
+              console.log(result)
               bars=result.body;
               result.body.forEach(function(item){
                 ids.push(item.yelpid)
@@ -163,13 +179,14 @@
             .then(function(){
               b=this.businesses
               b.forEach(function(item, index){
-                var id=ids.indexOf(item.id)
+                var id=ids.indexOf(item.id);
                 if(id==-1){
                   g=0
                 }
                 else{
                   g=bars[id].answers.length
                 }
+
                 //update the data
                 var newObject = Object.assign({}, vm.businesses[index], {going: g});
                 vm.$set(vm.businesses, index, newObject);

@@ -14,9 +14,9 @@ var yelp=new Yelp({
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var loggedin=false;
-  if(req.user){loggedin=true}
-  res.render('layout', {user: loggedin});
+  var user=null;
+  if(req.isAuthenticated()){user=req.user}
+  res.render('layout', {user: user });
 });
 
 router.get('/search', function(req, res){
