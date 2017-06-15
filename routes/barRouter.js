@@ -28,9 +28,6 @@ barRouter.route('/:id')
   .get(function(req,res){
     Bars.find({yelpid: req.params.id}, function(err, bars){
       if (err) throw err;
-      if(bars.length>0){
-        bars.push({proba: true});
-    }
     res.json(bars)
     })
 
@@ -47,8 +44,20 @@ barRouter.route('/:id')
     //  res.redirect(req.get('referer'));
     // do something with the document
     });
+  });
 
-
+barRouter.route('/delete/:id')
+  .post(function(req, res){
+    console.log("delete")
+    var query = {yelpid: req.params.id},
+    update = {$pull: {answers: {person: req.user.id}}}
+    options = {}
+    console.log(query)
+    console.log(update)
+    Bars.findOneAndUpdate(query, update, options, function(err, result){
+      if(err) throw err;
+      res.json(result);
+    });
   });
 
 module.exports=barRouter;

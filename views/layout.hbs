@@ -121,14 +121,17 @@
 
   Vue.component('bar', {
     props: ['data', 'user'],
-    template: "<div ><span><img class='resultimg' :src='data.image_url'></span><span class='textsp'><a :href='data.url'><h2>${data.name}<img :src='data.rating_img_url_small'></h2></a><p id='snippet'> ${data.snippet_text} </p><p v-if='data.is_closed==false'>Open now</p></span><span><p>${data.going} going</p><button v-if=data.userIsGoing>You're going</button><button v-else v-on:click='respond(data)'>RSVP</button></span></div>",
+    template: "<div ><span><img class='resultimg' :src='data.image_url'></span><span class='textsp'><a :href='data.url'><h2>${data.name}<img :src='data.rating_img_url_small'></h2></a><p id='snippet'> ${data.snippet_text} </p><p v-if='data.is_closed==false'>Open now</p></span><span><p>${data.going} going</p><button v-if=data.userIsGoing v-on:click='respond(data)'>You're going</button><button v-else v-on:click='respond(data)'>RSVP</button></span></div>",
     delimiters: ['${', '}'],
     methods: {
     respond(business){
-      this.$emit('respond', business)
-    }
+      this.$emit('respond', business);
+    },
+    unrespond(business){
+      this.$emit('unrsvp', business);
+    },
   },
-  })
+});
 
   new Vue({
     el: '#root',
@@ -165,16 +168,29 @@
       },
       //RSVP
       respond(business){
+        console.log("bla1")
         var vm=this;
+        if(!business.userIsGoing){
         var address="/bars/" + business.id;
         var index=vm.businesses.indexOf(business)
         this.$http.post(address)
         .then(function(result){
           //Needs to be this complicated, because businesses is an array
-          var newObject = Object.assign({}, vm.businesses[index], {going: result.body.answers.length});
+          var newObject = Object.assign({}, vm.businesses[index], {going: result.data.answers.length, userIsGoing: true});
           vm.$set(vm.businesses, index, newObject);
         });
       }
+      else{
+        var address="/bars/delete/" + business.id;
+        var index=vm.businesses.indexOf(business);
+        this.$http.post(address)
+        .then(function(result){
+          console.log(result)
+          var newObject = Object.assign({}, vm.businesses[index], {going: result.data.answers.length-1, userIsGoing: false});
+          vm.$set(vm.businesses, index, newObject);
+        });
+      }
+      },
     },
 
 
