@@ -56,24 +56,7 @@
                      <input v-model="location">
                      <button @click="searchLocation">Search</button>
                      <bar v-if="ok" v-for="business in businesses" :key="business.id" class="searchResult" :data="business" v-on:respond="respond">
-                      <!--
-                      <div>
-                        <span>
-                          <img class="resultimg" :src="business.image_url">
-                        </span>
-                        <span class="textsp">
-                          <a :href="business.url"><h2>${business.name}
-                            <img :src="business.rating_img_url_small"></h2>
-                          </a>
-                          <p id="snippet">" ${business.snippet_text} "</p>
-                          <p v-if="business.is_closed==false">Open now</p>
-                        </span>
-                        <span><p>${business.going} going</p>
-                          <button @click="respond(business)">RSVP</button>
-                        </span>
-                      </div>
-                    -->
-                  </bar>
+                     </bar>
                   </div>
               </div>
           </div>
@@ -137,7 +120,7 @@
 
 
   Vue.component('bar', {
-    props: ['data'],
+    props: ['data', 'user'],
     template: "<div ><span><img class='resultimg' :src='data.image_url'></span><span class='textsp'><a :href='data.url'><h2>${data.name}<img :src='data.rating_img_url_small'></h2></a><p id='snippet'> ${data.snippet_text} </p><p v-if='data.is_closed==false'>Open now</p></span><span><p>${data.going} going</p><button v-on:click='respond(data)'>RSVP</button></span></div>",
     delimiters: ['${', '}'],
     methods: {
@@ -169,30 +152,11 @@
             //Check which bars are in the database, i.e someone RSVPed
             this.$http.get("/bars")
             .then(function(result){
-              console.log(result)
-              bars=result.body;
-              result.body.forEach(function(item){
-                ids.push(item.yelpid)
+              result.data.forEach(function(bar){
+                b=vm.businesses.filter(function(item){return item.id==bar.yelpid});
+                b[0].going=bar.answers.length;
               })
             })
-            //Count how many people are going to each bar, if any
-            .then(function(){
-              b=this.businesses
-              b.forEach(function(item, index){
-                var id=ids.indexOf(item.id);
-                if(id==-1){
-                  g=0
-                }
-                else{
-                  g=bars[id].answers.length
-                }
-
-                //update the data
-                var newObject = Object.assign({}, vm.businesses[index], {going: g});
-                vm.$set(vm.businesses, index, newObject);
-              });
-
-            });
           });
 
             this.ok=true
