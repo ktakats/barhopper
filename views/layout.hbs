@@ -121,7 +121,7 @@
 
   Vue.component('bar', {
     props: ['data', 'user'],
-    template: "<div ><span><img class='resultimg' :src='data.image_url'></span><span class='textsp'><a :href='data.url'><h2>${data.name}<img :src='data.rating_img_url_small'></h2></a><p id='snippet'> ${data.snippet_text} </p><p v-if='data.is_closed==false'>Open now</p></span><span><p>${data.going} going</p><button v-on:click='respond(data)'>RSVP</button></span></div>",
+    template: "<div ><span><img class='resultimg' :src='data.image_url'></span><span class='textsp'><a :href='data.url'><h2>${data.name}<img :src='data.rating_img_url_small'></h2></a><p id='snippet'> ${data.snippet_text} </p><p v-if='data.is_closed==false'>Open now</p></span><span><p>${data.going} going</p><button v-if=data.userIsGoing>You're going</button><button v-else v-on:click='respond(data)'>RSVP</button></span></div>",
     delimiters: ['${', '}'],
     methods: {
     respond(business){
@@ -155,6 +155,7 @@
               result.data.forEach(function(bar){
                 b=vm.businesses.filter(function(item){return item.id==bar.yelpid});
                 b[0].going=bar.answers.length;
+                b[0].userIsGoing=bar.userIsGoing;
               })
             })
           });

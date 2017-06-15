@@ -24,6 +24,7 @@ router.get('/search', function(req, res){
     if(err) throw err;
     data.businesses.forEach(function(bar){
       bar.going=0;
+      bar.userIsGoing=false;
     })
     res.json(data);
   });
