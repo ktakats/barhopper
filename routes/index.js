@@ -22,6 +22,7 @@ router.get('/', function(req, res, next) {
 router.get('/search', function(req, res){
   yelp.search({term:'nightlife', location: req.query.location, sort:2}, function(err, data){
     if(err) throw err;
+      console.log(data)
     data.businesses.forEach(function(bar){
       bar.going=0;
       bar.userIsGoing=false;

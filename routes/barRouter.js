@@ -11,8 +11,10 @@ barRouter.route('/')
   .get(function(req,res){
     Bars.find({}).lean().exec(function(err,bars){
       if(err) throw err;
+      console.log(bars)
       bars.forEach(function(bar){
         bar.userIsGoing=false;
+        bar.going=bar.answers.length;
         if(req.isAuthenticated()){
           var l=bar.answers.filter(function(elem){return elem.person==req.user.id})
           if(l.length>0){

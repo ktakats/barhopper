@@ -38,7 +38,7 @@
           <li><a class="page-scroll" href="#about">About</a></li>
           <li><a class="page-scroll" href="#bars">Bars</a></li>
           {{#if user}}
-          <li><a href="#">Logout</a></li>
+          <li><a href="/logout" id="id_logout">Logout</a></li>
           {{else}}
           <li><a class="page-scroll" href="#login" data-toggle="modal" data-target="#loginModal">Login</a></li>
           <li><a class="page-scroll" href="#signup" data-toggle="modal" data-target="#signupModal">Signup</a></li>
@@ -55,7 +55,7 @@
                    <div class="col-lg-12" id="root" >
                      <input v-model="location">
                      <button @click="searchLocation">Search</button>
-                     <bar v-if="ok" v-for="business in businesses" :key="business.id" class="searchResult" :data="business" v-on:respond="respond">
+                     <bar v-for="business in businesses" :key="business.id" class="searchResult" :data="business" v-on:respond="respond">
                      </bar>
                   </div>
               </div>
@@ -115,9 +115,30 @@
 </div>
 
   <script>
+
+
 //vue
+  var businessStorage = {
+    fetch: function () {
+      var businesses = JSON.parse(localStorage.getItem('businesses') || '[]');
+    //  businesses.forEach(function (business, index) {
+    //    business.id = index;
+    //  });
+    businessStorage.uid = businesses.length;
+    console.log(businesses)
+    return businesses
+    },
+  save: function(businesses) {
+    localStorage.setItem('businesses', JSON.stringify(businesses))
+  },
+  clear: function() {
+    localStorage.removeItem('businesses');
+  }
+  };
 
-
+  $("#id_logout").on('click', function(){
+    businessStorage.clear();
+  })
 
   Vue.component('bar', {
     props: ['data', 'user'],
@@ -137,9 +158,8 @@
     el: '#root',
     delimiters: ['${', '}'],
     data: function() {return {
-      location: "",
-      businesses: [],
-      ok: false,
+      location:"",
+      businesses: businessStorage.fetch(),
     }
     },
     methods: {
@@ -155,16 +175,18 @@
             //Check which bars are in the database, i.e someone RSVPed
             this.$http.get("/bars")
             .then(function(result){
+              console.log(result)
               result.data.forEach(function(bar){
                 b=vm.businesses.filter(function(item){return item.id==bar.yelpid});
-                b[0].going=bar.answers.length;
-                b[0].userIsGoing=bar.userIsGoing;
-              })
+                if(b.length>0){
+                  b[0].going=bar.answers.length;
+                  b[0].userIsGoing=bar.userIsGoing;
+                }
+              });
+              console.log(vm.businesses)
+              localStorage.setItem('businesses', JSON.stringify(vm.businesses));
             })
           });
-
-            this.ok=true
-
       },
       //RSVP
       respond(business){
@@ -172,6 +194,7 @@
         var vm=this;
         if(!business.userIsGoing){
         var address="/bars/" + business.id;
+        console.log(address)
         var index=vm.businesses.indexOf(business)
         this.$http.post(address)
         .then(function(result){
