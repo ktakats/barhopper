@@ -66,3 +66,8 @@ html {
   font-style: italic;
   position: relative;
 }
+
+#map {
+  height: 400px;
+  width: 100%;
+}

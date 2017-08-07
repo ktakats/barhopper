@@ -54,10 +54,13 @@
                <div class="row">
                    <div class="col-lg-12" id="root" >
                      <input v-model="location">
-                     <button @click="searchLocation">Search</button>
+                     <button @click="searchLocation" id="search">Search</button>
                      <bar v-for="business in businesses" :key="business.id" class="searchResult" :data="business" :user="user" v-on:respond="respond">
                      </bar>
                   </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12" id="map"></div>
               </div>
           </div>
   </section>
@@ -226,7 +229,28 @@
 
   });
 
-  </script>
+  $("#search").on('click', function(){
+
+    var data=businessStorage.fetch();
+    console.log(data[0].location.coordinate)
+    var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+          center: {lat: data[0].location.coordinate.latitude, lng: data[0].location.coordinate.longitude}
+    });
+    data.forEach(function(bar){
+        var coord={lat: bar.location.coordinate.latitude, lng: bar.location.coordinate.longitude};
+        var marker = new google.maps.Marker({
+          position: coord,
+          map: map
+        });
+      });
+  });
+</script>
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=">
+</script>
+
+
 
 </body>
 </html>
