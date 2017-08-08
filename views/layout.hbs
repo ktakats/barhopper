@@ -65,7 +65,7 @@
                      </gmap-map>
                    </div>
                    <div class="col-lg-4" >
-                     <bar v-for="business in businesses" :key="business.id" class="searchResult" :data="business" :user="user" v-on:respond="respond">
+                     <bar class="searchResult" :data="focusedBar" :user="user" v-on:respond="respond">
                      </bar>
                   </div>
 
@@ -192,6 +192,7 @@ Vue.use(VueGoogleMaps, {
       infoWindowPos: {lat: 0,lng: 0},
       infoWinOpen: false,
       infoOptions: {pixelOffset: {width: 0, height: -35}},
+      focusedBar: undefined
       }
     },
     methods: {
@@ -204,7 +205,7 @@ Vue.use(VueGoogleMaps, {
             this.businesses=data.body.businesses;
             this.center={lat: this.businesses[0].location.coordinate.latitude, lng: this.businesses[0].location.coordinate.longitude};
             this.businesses.forEach(function(bar){
-              vm.markers.push({position: {lat: bar.location.coordinate.latitude, lng: bar.location.coordinate.longitude}, infotext: bar.name})
+              vm.markers.push({position: {lat: bar.location.coordinate.latitude, lng: bar.location.coordinate.longitude}, infotext: bar.name, bar: bar})
             })
             //Check which bars are in the database, i.e someone RSVPed
             this.$http.get("/bars")
@@ -252,6 +253,7 @@ Vue.use(VueGoogleMaps, {
 
         this.infoWindowPos = marker.position;
         this.infoContent = marker.infotext;
+        this.focusedBar=marker.bar;
 
               //check if its the same marker that was selected if yes toggle
         if (this.currentMidx == idx) {
