@@ -204,9 +204,7 @@ Vue.use(VueGoogleMaps, {
           .then(function(data){
             this.businesses=data.body.businesses;
             this.center={lat: this.businesses[0].location.coordinate.latitude, lng: this.businesses[0].location.coordinate.longitude};
-            this.businesses.forEach(function(bar){
-              vm.markers.push({position: {lat: bar.location.coordinate.latitude, lng: bar.location.coordinate.longitude}, infotext: bar.name, bar: bar})
-            })
+
             //Check which bars are in the database, i.e someone RSVPed
             this.$http.get("/bars")
             .then(function(result){
@@ -218,7 +216,9 @@ Vue.use(VueGoogleMaps, {
                   b[0].userIsGoing=bar.userIsGoing;
                 }
               });
-              console.log(vm.businesses)
+              this.businesses.forEach(function(bar){
+                vm.markers.push({position: {lat: bar.location.coordinate.latitude, lng: bar.location.coordinate.longitude}, infotext: bar.name, bar: bar})
+              })
               localStorage.setItem('businesses', JSON.stringify(vm.businesses));
             })
           });
@@ -236,6 +236,8 @@ Vue.use(VueGoogleMaps, {
           //Needs to be this complicated, because businesses is an array
           var newObject = Object.assign({}, vm.businesses[index], {going: result.data.answers.length, userIsGoing: true});
           vm.$set(vm.businesses, index, newObject);
+          vm.focusedBar.going=result.data.answers.length;
+          vm.focusedBar.userIsGoing=true;
         });
       }
       else{
@@ -246,6 +248,8 @@ Vue.use(VueGoogleMaps, {
           console.log(result)
           var newObject = Object.assign({}, vm.businesses[index], {going: result.data.answers.length-1, userIsGoing: false});
           vm.$set(vm.businesses, index, newObject);
+          vm.focusedBar.going=result.data.answers.length-1;
+          vm.focusedBar.userIsGoing=false;
         });
       }
       },
