@@ -37,6 +37,9 @@ html {
   margin-bottom: 50px;
 }
 
+#results{
+  padding-top: 5%;
+}
 
 .searchResult{
   margin: auto;
@@ -69,5 +72,5 @@ html {
 
 #map {
   height: 400px;
-  width: 100%;
+  width: 50%;
 }

@@ -16,6 +16,8 @@
   <script src="https://unpkg.com/vue@2.3.3"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.2.0/vue-resource.js"></script>
   <script type="text/javascript" src="/javascripts/scrolling-nav.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
+  <script src="/javascripts/vue-google-maps.js"></script>
 </head>
 
 <html>
@@ -50,18 +52,26 @@
   </nav>
 
   <section id="intro" class="intro-section">
-           <div class="container">
-               <div class="row">
-                   <div class="col-lg-12" id="root" >
-                     <input v-model="location">
-                     <button @click="searchLocation" id="search">Search</button>
+           <div class="container" id="root">
+             <input v-model="location">
+             <button @click="searchLocation" id="search">Search</button>
+
+               <div class="row" id="results">
+                   <div class="col-lg-4" id="map">
+                     <gmap-map :center=center :zoom=12 style="width: 100%; height: 400px">
+                       <gmap-info-window :options="infoOptions" :position="infoWindowPos" :opened="infoWinOpen" :content="infoContent" @closeclick="infoWinOpen=false"></gmap-info-window>
+                        <gmap-marker :key="i" v-for="(m,i) in markers" :position="m.position" :clickable="true" @click="toggleInfoWindow(m,i)"></gmap-marker>
+
+                     </gmap-map>
+                   </div>
+                   <div class="col-lg-4" >
                      <bar v-for="business in businesses" :key="business.id" class="searchResult" :data="business" :user="user" v-on:respond="respond">
                      </bar>
                   </div>
+
               </div>
-              <div class="row">
-                <div class="col-lg-12" id="map"></div>
-              </div>
+
+
           </div>
   </section>
 
@@ -163,6 +173,12 @@
   },
 });
 
+Vue.use(VueGoogleMaps, {
+   load: {
+     key: ''
+   },
+ });
+
   new Vue({
     el: '#root',
     delimiters: ['${', '}'],
@@ -170,7 +186,13 @@
       location:"",
       businesses: businessStorage.fetch(),
       user: isLoggedIn(),
-    }
+      center: {lat: -33.441861, lng: -70.62646},
+      markers: [],
+      infoContent: '',
+      infoWindowPos: {lat: 0,lng: 0},
+      infoWinOpen: false,
+      infoOptions: {pixelOffset: {width: 0, height: -35}},
+      }
     },
     methods: {
       searchLocation(){
@@ -180,8 +202,10 @@
         this.$http.get(address)
           .then(function(data){
             this.businesses=data.body.businesses;
-            var bars=[]
-            var ids=[]
+            this.center={lat: this.businesses[0].location.coordinate.latitude, lng: this.businesses[0].location.coordinate.longitude};
+            this.businesses.forEach(function(bar){
+              vm.markers.push({position: {lat: bar.location.coordinate.latitude, lng: bar.location.coordinate.longitude}, infotext: bar.name})
+            })
             //Check which bars are in the database, i.e someone RSVPed
             this.$http.get("/bars")
             .then(function(result){
@@ -224,15 +248,31 @@
         });
       }
       },
+      toggleInfoWindow: function(marker, idx) {
+
+        this.infoWindowPos = marker.position;
+        this.infoContent = marker.infotext;
+
+              //check if its the same marker that was selected if yes toggle
+        if (this.currentMidx == idx) {
+                this.infoWinOpen = !this.infoWinOpen;
+        }
+              //if different marker set infowindow to open and reset current marker index
+        else {
+              this.infoWinOpen = true;
+              this.currentMidx = idx;
+
+        }
+      },
     },
 
 
   });
 
-  $("#search").on('click', function(){
 
-    var data=businessStorage.fetch();
-    console.log(data[0].location.coordinate)
+
+
+  function makeMap(data){
     var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 12,
           center: {lat: data[0].location.coordinate.latitude, lng: data[0].location.coordinate.longitude}
@@ -243,12 +283,29 @@
           position: coord,
           map: map
         });
+        var infowindow = new google.maps.InfoWindow({
+          content: "<div ><span><img class='resultimg' :src='bar.image_url'></span><span class='textsp'><a :href='bar.url'><h2>"+bar.name+"<img src='"+bar.rating_img_url_small+"'></h2></a><p id='snippet'>" +bar.snippet_text+" </p><p>Open now</p></span><span><p>"+bar.going+" going</p></span><span v-if=user><button v-if=data.userIsGoing v-on:click='respond(bar)'>You're going</button><button v-else v-on:click='respond(bar)'>RSVP</button></span></div>"
+        });
+
+        marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
       });
-  });
+  };
+
+//  $("document").ready(function(){
+//    var data=businessStorage.fetch();
+//    if(data.length>0){
+//      makeMap(data);
+//    }
+//  })
+
+
 </script>
-<script
-    src="https://maps.googleapis.com/maps/api/js?key=">
-</script>
+<!--<script
+Z    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCopXnTNbYLYZHxyfm4JsN9BnneiHFfDA8">
+</script>-->
+
 
 
 
