@@ -65,7 +65,7 @@
                      </gmap-map>
                    </div>
                    <div class="col-lg-4" >
-                     <bar  class="searchResult" :data="focusedBar" :user="user" v-on:respond="respond">
+                     <bar v-if=infoWinOpen class="searchResult" :data="focusedBar" :user="user" v-on:respond="respond">
                      </bar>
                   </div>
 
@@ -132,19 +132,36 @@
 
 //vue
   var businessStorage = {
-    fetch: function () {
-      var businesses = JSON.parse(localStorage.getItem('businesses') || '[]');
+    fetch: function (item) {
+      var businesses = JSON.parse(localStorage.getItem(item) || '[]');
     //  businesses.forEach(function (business, index) {
     //    business.id = index;
     //  });
     businessStorage.uid = businesses.length;
+    if(businesses.length==0){
+      if(item=="markers"){
+        businesses=[]
+      }
+      else if(item=="infoContent"){
+        businesses=""
+      }
+      else if(item=="center"){
+        businesses={}
+      }
+      else if(item="infoWindowPos"){
+        businesses={lat: 0, lng: 0}
+      }
+    }
     return businesses
     },
-  save: function(businesses) {
-    localStorage.setItem('businesses', JSON.stringify(businesses))
+  save: function(id, item) {
+    localStorage.setItem(id, JSON.stringify(item))
   },
   clear: function() {
-    localStorage.removeItem('businesses');
+    ['businesses', 'center', 'markers', 'infoContent', 'infoWindowPos', 'focusedBar'].forEach(function(item){
+        localStorage.removeItem(item);
+    });
+
   }
   };
 
@@ -184,31 +201,30 @@ Vue.use(VueGoogleMaps, {
     delimiters: ['${', '}'],
     data: function() {return {
       location:"",
-      businesses: businessStorage.fetch(),
+      businesses: businessStorage.fetch('businesses'),
       user: isLoggedIn(),
-      center: {lat: -33.441861, lng: -70.62646},
-      markers: [],
-      infoContent: '',
-      infoWindowPos: {lat: 0,lng: 0},
-      infoWinOpen: false,
+      center: businessStorage.fetch('center'),
+      markers: businessStorage.fetch('markers'),
+      infoContent: businessStorage.fetch('infoContent'),
+      infoWindowPos: businessStorage.fetch('infoWindowPos'),
+      infoWinOpen: businessStorage.fetch('infoContent').length>0 || false,
       infoOptions: {pixelOffset: {width: 0, height: -35}},
-      focusedBar: undefined
+      focusedBar: businessStorage.fetch('focusedBar'),
       }
     },
     methods: {
       searchLocation(){
         var address = "/search/?location="+this.location;
         var vm=this;
+        this.infoWinOpen=false;
         //API call to yelp
         this.$http.get(address)
           .then(function(data){
             this.businesses=data.body.businesses;
             this.center={lat: this.businesses[0].location.coordinate.latitude, lng: this.businesses[0].location.coordinate.longitude};
-
             //Check which bars are in the database, i.e someone RSVPed
             this.$http.get("/bars")
             .then(function(result){
-              console.log(result)
               result.data.forEach(function(bar){
                 b=vm.businesses.filter(function(item){return item.id==bar.yelpid});
                 if(b.length>0){
@@ -219,13 +235,14 @@ Vue.use(VueGoogleMaps, {
               this.businesses.forEach(function(bar){
                 vm.markers.push({position: {lat: bar.location.coordinate.latitude, lng: bar.location.coordinate.longitude}, infotext: bar.name, bar: bar})
               })
-              localStorage.setItem('businesses', JSON.stringify(vm.businesses));
+              businessStorage.save('businesses', vm.businesses);
+              businessStorage.save('center', vm.center);
+              businessStorage.save('markers', vm.markers);
             })
           });
       },
       //RSVP
       respond(business){
-        console.log("bla1")
         var vm=this;
         if(!business.userIsGoing){
         var address="/bars/" + business.id;
@@ -258,6 +275,9 @@ Vue.use(VueGoogleMaps, {
         this.infoWindowPos = marker.position;
         this.infoContent = marker.infotext;
         this.focusedBar=marker.bar;
+        businessStorage.save('focusedBar', this.focusedBar);
+        businessStorage.save('infoWindowPos', this.infoWindowPos);
+        businessStorage.save('infoContent', this.infoContent);
 
               //check if its the same marker that was selected if yes toggle
         if (this.currentMidx == idx) {
