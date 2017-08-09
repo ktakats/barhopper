@@ -33,7 +33,7 @@ module.exports = function(passport){
           newUser.local.password=newUser.generateHash(password)
 
           newUser.save(function(err){
-            if(err) throw err;
+            if(err) return done(err);
             return done(null, newUser);
           });
         }
@@ -56,7 +56,7 @@ module.exports = function(passport){
       }
 
       if(!user.validPassword(password)){
-        return done(null, false)
+        return done(null, false, )
       }
       return done(null, user);
     });

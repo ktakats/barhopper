@@ -34,7 +34,7 @@ router.get('/search', function(req, res){
 
 router.post('/login', passport.authenticate('local-login', {
   successRedirect: '/',
-  failureRedirect: '/login',
+  failureRedirect: '/error',
   failureFlash: true
 }));
 
@@ -49,10 +49,18 @@ router.get('/logout', function(req, res){
   res.redirect('/')
 });
 
+router.get('/error', function(req,res){
+  var err=new Error("Incorrect username or password!");
+  console.log(err)
+  res.render('error', { error: err})
+})
+
 function isLoggedIn(req, res, next){
   if (req.isAuthenticated()) return next();
 
   res.redirect('/');
 }
+
+
 
 module.exports = router;
