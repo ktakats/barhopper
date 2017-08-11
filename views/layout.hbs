@@ -56,14 +56,14 @@
              <button @click="searchLocation" id="search">Search</button>
 
                <div v-cloak v-if=markers.length!=0  class="row" id="results">
-                   <div class="col-lg-4" id="map">
+                   <div class="col-sm-6 col-lg-8" id="map">
                      <gmap-map  :center=center :zoom=12 style="width: 100%; height: 400px">
                        <gmap-info-window :options="infoOptions" :position="infoWindowPos" :opened="infoWinOpen" :content="infoContent" @closeclick="infoWinOpen=false"></gmap-info-window>
                         <gmap-marker :key="i" v-for="(m,i) in markers" :position="m.position" :clickable="true" @click="toggleInfoWindow(m,i)"></gmap-marker>
 
                      </gmap-map>
                    </div>
-                   <div class="col-lg-4" >
+                   <div class="col-sm-6 col-lg-4" id="focusedBar">
                      <bar v-if=infoWinOpen class="searchResult" :data="focusedBar" :user="user" v-on:respond="respond">
                      </bar>
                   </div>

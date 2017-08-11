@@ -44,10 +44,10 @@ html {
 .searchResult{
   margin: auto;
   margin-top: 3px;
-  width: 600px;
+  width: 100%;
   border: 1px solid black;
   border-radius: 5px;
-  padding: 10px;
+  padding: 2%;
   display: table;
 }
 
@@ -70,10 +70,25 @@ html {
   position: relative;
 }
 
-#map {
-  height: 400px;
-  width: 50%;
+@media screen and (max-device-width: 1024px){
+  #map {
+    width: 100%;
+  }
+  #focusedBar {
+    padding-top: 2%;
+    width: 100%;
+  }
 }
+
+@media screen and (min-width: 1024px){
+  #map {
+    width: 50%;
+  }
+  #focusedBar {
+    width: 50%;
+  }
+}
+
 
 [v-cloak] {
   display: none;
