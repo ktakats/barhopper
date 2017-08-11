@@ -51,8 +51,8 @@
   </nav>
 
   <section id="intro" class="intro-section">
-          {{error.message}}
            <div class="container" id="root">
+             <h2>Where are you partying tonight?</h2>
              <div class="input-group">
                  <input class="form-control" v-model="location">
                  <span class="input-group-btn">
@@ -187,7 +187,7 @@
 
   Vue.component('bar', {
     props: ['data', 'user'],
-    template: "<div ><div class='resultimg' ><img :src='data.image_url'><div class='going'><span><p>${data.going} going</p></span><span v-if=user><button v-if=data.userIsGoing v-on:click='respond(data)'>You're going</button><button v-else v-on:click='respond(data)'>RSVP</button></span></div> </div><div class='textsp'><a :href='data.url' target='_blank'><h2>${data.name}</h2></a><p id='snippet'> ${data.snippet_text} </p><p><img :src='data.rating_img_url' id='rating'> ${data.review_count} yelp ratings</p><p v-if='data.is_closed==false' style='color:green'>Open now</p></div></div>",
+    template: "<div ><div class='resultimg' ><img :src='data.image_url'><div class='going'><span><p>${data.going} going</p></span><span v-if=user><button v-if=data.userIsGoing v-on:click='respond(data)'>You're going</button><button v-else v-on:click='respond(data)'>RSVP</button></span></div> </div><div class='textsp'><a :href='data.url' target='_blank'><h3>${data.name}</h3></a><p id='snippet'> ${data.snippet_text} </p><p><img :src='data.rating_img_url' id='rating'> ${data.review_count} yelp ratings</p><p v-if='data.is_closed==false' style='color:green'>Open now</p></div></div>",
     delimiters: ['${', '}'],
     methods: {
     respond(business){
