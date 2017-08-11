@@ -18,6 +18,7 @@
   <script type="text/javascript" src="/javascripts/scrolling-nav.js" charset="utf-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
   <script src="/javascripts/vue-google-maps.js"></script>
+  <script src="https://use.fontawesome.com/e460a2c4a4.js"></script>
 </head>
 
 <html>
@@ -55,7 +56,7 @@
              <div class="input-group">
                  <input class="form-control" v-model="location">
                  <span class="input-group-btn">
-                 <button class="btn" @click="searchLocation" id="search">Search</button>
+                 <button class="btn" @click="searchLocation" id="search">Search <i class="fa fa-yelp"></i></button>
                </span>
              </div>
 
@@ -186,7 +187,7 @@
 
   Vue.component('bar', {
     props: ['data', 'user'],
-    template: "<div ><div class='resultimg' ><img :src='data.image_url'><div class='going'><span><p>${data.going} going</p></span><span v-if=user><button v-if=data.userIsGoing v-on:click='respond(data)'>You're going</button><button v-else v-on:click='respond(data)'>RSVP</button></span></div> </div><div class='textsp'><a :href='data.url' target='_blank'><h2>${data.name}</h2></a><p id='snippet'> ${data.snippet_text} </p><p><img :src='data.rating_img_url' id='rating'> ${data.review_count} ratings</p><p v-if='data.is_closed==false' style='color:green'>Open now</p></div></div>",
+    template: "<div ><div class='resultimg' ><img :src='data.image_url'><div class='going'><span><p>${data.going} going</p></span><span v-if=user><button v-if=data.userIsGoing v-on:click='respond(data)'>You're going</button><button v-else v-on:click='respond(data)'>RSVP</button></span></div> </div><div class='textsp'><a :href='data.url' target='_blank'><h2>${data.name}</h2></a><p id='snippet'> ${data.snippet_text} </p><p><img :src='data.rating_img_url' id='rating'> ${data.review_count} yelp ratings</p><p v-if='data.is_closed==false' style='color:green'>Open now</p></div></div>",
     delimiters: ['${', '}'],
     methods: {
     respond(business){
@@ -351,20 +352,13 @@ var  vm=new Vue({
       });
   };
 
-//  $("document").ready(function(){
-//    var data=businessStorage.fetch();
-//    if(data.length>0){
-//      makeMap(data);
-//    }
-//  })
-
 
 </script>
-<!--<script
-Z    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCopXnTNbYLYZHxyfm4JsN9BnneiHFfDA8">
-</script>-->
 
 
+<footer>
+<a href="https://github.com/ktakats/barhopper" target="_blank"><i class="fa fa-lg fa-github"></i></a>
+</footer>
 
 
 </body>
