@@ -222,6 +222,7 @@ var  vm=new Vue({
         var address = "/search/?location="+this.location;
         var vm=this;
         this.infoWinOpen=false;
+        vm.markers=[];
         //API call to yelp
         this.$http.get(address)
           .then(function(data){
@@ -238,7 +239,7 @@ var  vm=new Vue({
                 }
               });
               this.businesses.forEach(function(bar, ind){
-                vm.markers.push({position: {lat: bar.location.coordinate.latitude, lng: bar.location.coordinate.longitude}, infotext: bar.name, bar: ind})
+                vm.markers.push({position: {lat: bar.location.coordinate.latitude, lng: bar.location.coordinate.longitude}, infotext: bar.name})
               })
               businessStorage.save('businesses', vm.businesses);
               businessStorage.save('center', vm.center);
@@ -301,7 +302,7 @@ var  vm=new Vue({
 
         this.infoWindowPos = marker.position;
         this.infoContent = marker.infotext;
-        this.focusedBar=this.businesses[marker.bar];
+        this.focusedBar=this.businesses.filter(function(item){return item.name==marker.infotext})[0];
         businessStorage.save('focusedBar', this.focusedBar);
         businessStorage.save('infoWindowPos', this.infoWindowPos);
         businessStorage.save('infoContent', this.infoContent);
