@@ -41,27 +41,25 @@ html {
   padding-top: 5%;
 }
 
-.searchResult{
-  margin: auto;
-  margin-top: 3px;
-  width: 100%;
-  border: 1px solid black;
-  border-radius: 5px;
-  padding: 2%;
-  display: table;
-}
+
 
 .resultimg {
-  display: table-cell;
+  float: left;
   vertical-align: middle;
-  margin-top: 15px;
-  margin-right: 10px;
+  padding-top: 2%
 }
 
 .textsp {
-  display: table-cell;
+  margin-top: -2%;
+  padding-top: 0px;
+  float: right;
   text-align: left;
-  vertical-align: middle;
+  width: 72%;
+}
+
+.going {
+  width: 100%;
+  padding-top: 5%;
 }
 
 #snippet {
@@ -70,6 +68,7 @@ html {
   position: relative;
 }
 
+
 @media screen and (max-device-width: 1024px){
   #map {
     width: 100%;
@@ -77,6 +76,9 @@ html {
   #focusedBar {
     padding-top: 2%;
     width: 100%;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding-bottom: 2%;
   }
 }
 
@@ -86,6 +88,9 @@ html {
   }
   #focusedBar {
     width: 50%;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding-bottom: 2%;
   }
 }
 
