@@ -194,7 +194,7 @@
 
   Vue.component('bar', {
     props: ['data', 'user'],
-    template: "<div ><div class='resultimg' ><img :src='data.image_url'><div class='going'><span><p>${data.going} going</p></span><span v-if=user><button v-if=data.userIsGoing v-on:click='respond(data)'>You're going</button><button v-else v-on:click='respond(data)'>RSVP</button></span></div> </div><div class='textsp'><a :href='data.url' target='_blank'><h3>${data.name}</h3></a><p id='snippet'> ${data.snippet_text} </p><p><img :src='data.rating_img_url' id='rating'> ${data.review_count} yelp ratings</p><p v-if='data.is_closed==false' style='color:green'>Open now</p></div></div>",
+    template: "<div ><div class='resultimg' ><img :src='data.image_url'><div class='going'><span><p>${data.going} going</p></span><span v-if=user><button v-if=data.userIsGoing v-on:click='respond(data)'>You're going</button><button v-else v-on:click='respond(data)'>RSVP</button></span><span v-else>Log in to RSVP</span></div> </div><div class='textsp'><a :href='data.url' target='_blank'><h3>${data.name}</h3></a><p id='snippet'> ${data.snippet_text} </p><p><img :src='data.rating_img_url' id='rating'> ${data.review_count} yelp ratings</p><p v-if='data.is_closed==false' style='color:green'>Open now</p></div></div>",
     delimiters: ['${', '}'],
     methods: {
     respond(business){
@@ -218,7 +218,6 @@ var  vm=new Vue({
     beforeCreate: function(){
       var now=new Date().getTime();
       var timestamp=businessStorage.fetch('lastSearch');
-      console.log(now-timestamp.timestamp)
       if(timestamp.timestamp>0 && now-timestamp.timestamp>86400000){
         businessStorage.clear();
       }
@@ -346,27 +345,6 @@ var  vm=new Vue({
 
 
 
-
-  function makeMap(data){
-    var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 12,
-          center: {lat: data[0].location.coordinate.latitude, lng: data[0].location.coordinate.longitude}
-    });
-    data.forEach(function(bar){
-        var coord={lat: bar.location.coordinate.latitude, lng: bar.location.coordinate.longitude};
-        var marker = new google.maps.Marker({
-          position: coord,
-          map: map
-        });
-        var infowindow = new google.maps.InfoWindow({
-          content: "<div ><span><img class='resultimg' :src='bar.image_url'></span><span class='textsp'><a :href='bar.url'><h2>"+bar.name+"<img src='"+bar.rating_img_url_small+"'></h2></a><p id='snippet'>" +bar.snippet_text+" </p><p>Open now</p></span><span><p>"+bar.going+" going</p></span><span v-if=user><button v-if=data.userIsGoing v-on:click='respond(bar)'>You're going</button><button v-else v-on:click='respond(bar)'>RSVP</button></span></div>"
-        });
-
-        marker.addListener('click', function() {
-          infowindow.open(map, marker);
-        });
-      });
-  };
 
 
 </script>
