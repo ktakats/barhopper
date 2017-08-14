@@ -1,4 +1,4 @@
-#Barhopper
+# Barhopper
 
 This app was built as a solution for FreeCodeCamp's nightlife coordination app [challenge](https://www.freecodecamp.org/challenges/build-a-nightlife-coordination-app).
 
