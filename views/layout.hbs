@@ -33,7 +33,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-        <a class="navbar-brand page-scroll", href="/">Barhopper</a>
+        <a class="navbar-brand page-scroll" id="home" href="/">Barhopper</a>
       </div>
 
       <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -179,6 +179,10 @@
   }
 
   $("#id_logout").on('click', function(){
+    businessStorage.clear();
+  });
+
+  $("#home").on('click', function(){
     businessStorage.clear();
   });
 
